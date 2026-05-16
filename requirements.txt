@@ -1,0 +1,14 @@
+streamlit==1.40.1
+firebase-admin==6.9.0
+pandas==2.0.3
+numpy==1.24.4
+folium==0.18.0
+streamlit-folium==0.22.1
+streamlit-autorefresh==1.0.1
+streamlit-option-menu==0.4.0
+Pillow==10.4.0
+requests==2.32.4
+python-dateutil==2.9.0.post0
+pytz==2025.2
+pyyaml==6.0.3
+bcrypt==3.1.7
