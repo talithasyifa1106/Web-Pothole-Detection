@@ -11,4 +11,4 @@ requests==2.32.4
 python-dateutil==2.9.0.post0
 pytz==2025.2
 pyyaml==6.0.3
-bcrypt==3.1.7
+bcrypt==4.2.0
