@@ -3,6 +3,8 @@ import yaml
 import bcrypt
 import base64
 import os
+import json
+import tempfile
 import firebase_admin
 from firebase_admin import credentials
 
@@ -18,6 +20,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+if "GOOGLE_APPLICATION_CREDENTIALS_JSON" in os.environ:
+    key_data = json.loads(os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"])
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".json", mode="w")
+    json.dump(key_data, tmp)
+    tmp.close()
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tmp.name
+    
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap');
