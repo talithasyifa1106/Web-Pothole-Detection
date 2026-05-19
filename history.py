@@ -129,14 +129,8 @@ def showww():
 
     df = pd.DataFrame(rows)
 
-    m1, m2, m3, m4 = st.columns(4)
+    m1, m2, m4 = st.columns(3)
     m1.metric("📋 Total Data", len(df))
-
-    try:
-        vol_avg = pd.to_numeric(df["Volume"], errors="coerce").mean()
-        m3.metric("📦 Avg Volume", f"{vol_avg:.1f} cm³" if not pd.isna(vol_avg) else "-")
-    except Exception:
-        m3.metric("📦 Avg Volume", "-")
 
     jenis_mode = df["Type"].mode()
     m4.metric("⚠️ Jenis Terbanyak", jenis_mode[0] if not jenis_mode.empty else "-")
