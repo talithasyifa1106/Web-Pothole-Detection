@@ -245,40 +245,55 @@ def show():
         toast_placeholder = st.empty()
 
         # Wrapper pakai class save-btn-wrap — CSS override ada di app.py
-        st.markdown('<div class="save-btn-wrap">', unsafe_allow_html=True)
+        if "save_toast" not in st.session_state:
+            st.session_state.save_toast = None
+
         c1, c2, c3 = st.columns([1, 1, 1])
         with c2:
             if st.button("Save", key="btn_save", use_container_width=True):
                 saved_label = _save_to_history(data_yolo, data_jarak, image_url)
                 if saved_label:
-                    toast_placeholder.markdown(
-                        f'<div class="toast-notif">✅ Data {saved_label} berhasil disimpan</div>',
-                        unsafe_allow_html=True
-                    )
-                    time.sleep(3)
-                    toast_placeholder.empty()
-        st.markdown("</div>", unsafe_allow_html=True)
+                    st.session_state.save_toast = saved_label
 
+        # tampilkan toast dari session state
+        if st.session_state.save_toast:
+            toast_placeholder.markdown(
+                f'<div class="toast-notif">✅ Data {st.session_state.save_toast} berhasil disimpan</div>',
+                unsafe_allow_html=True
+            )
+            time.sleep(3)
+            st.session_state.save_toast = None
+            st.rerun()
 
 def _save_to_history(data_yolo: dict, data_jarak: dict, image_url):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     history_data = {
         "waktu"    : now,
-        "jenis"    : data_yolo.get("jenis",     "-"),   # ← dari yolo
-        "lebar"    : data_yolo.get("lebar",     "-"),   # ← dari yolo
-        "panjang"  : data_yolo.get("panjang",   "-"),   # ← dari yolo
-        "gambar"   : data_yolo.get("gambar",    ""),    # ← dari yolo
-        "kedalaman": data_jarak.get("kedalaman","-"),   # ← dari jarak
-        "volume"   : data_jarak.get("volume",   "-"),   # ← dari jarak
-        "lat"      : data_jarak.get("lat",      "-"),   # ← dari jarak
-        "lng"      : data_jarak.get("lng",      "-"),   # ← dari jarak
+        "jenis"    : data_yolo.get("jenis",     "-"),
+        "lebar"    : data_yolo.get("lebar",     "-"),
+        "panjang"  : data_yolo.get("panjang",   "-"),
+        "gambar"   : data_yolo.get("gambar",    ""),
+        "kedalaman": data_jarak.get("kedalaman","-"),
+        "volume"   : data_jarak.get("volume",   "-"),
+        "lat"      : data_jarak.get("lat",      "-"),
+        "lng"      : data_jarak.get("lng",      "-"),
     }
 
     try:
-        ref      = db.reference("history")
+        ref = db.reference("history")
         existing = ref.get()
-        count    = (len(existing) + 1) if existing else 1
-        label    = f"data{count}"
+        if existing:
+            numbers = []
+            for k in existing.keys():
+                try:
+                    numbers.append(int(k.replace("data", "")))
+                except:
+                    pass
+            count = max(numbers) + 1 if numbers else 1
+        else:
+            count = 1
+
+        label = f"data{count}"
         ref.child(label).set(history_data)
         return label
     except Exception as e:
